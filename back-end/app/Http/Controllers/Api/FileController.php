@@ -87,7 +87,17 @@ class FileController extends Controller
         $im = new Imagick($svg_path);
         $png_path = './storage/'.time().'_new.png';
         // $im->scaleImage($clientRect->width * $scale, $clientRect->height * $scale);
+        $files = Storage::allFiles('./public');
+        $currenttime = time() - 60;
+        $oldPath = 'public/'.$currenttime.'_new.png';
+        foreach ($files as $file) {
+            if (strpos($file, '_new.png') > 0) {
+                if (strcmp($oldPath, $file) > 0)
+                    Storage::delete($file);
+            }
+        }
         $im->writeImage($png_path);
+
         return response(['url' => $png_path], 200);
     }
 }
